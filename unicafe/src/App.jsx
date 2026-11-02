@@ -18,8 +18,10 @@ const MetricRow = (props) => {
 const PercentileMetricRow = ({ symbol, ...props }) =>
     <MetricRow {...props} symbol={'%'}/>
 
-const Statistics = (props) => {
-  if (props.total === 0) {
+const Statistics = ({ good, neutral, bad}) => {
+  const total = good + neutral + bad
+
+  if (total === 0) {
     return (
         <p>
           No feedback given
@@ -27,15 +29,18 @@ const Statistics = (props) => {
     )
   }
 
+  const average = (good - bad) / total
+  const positive = 100 * good / total
+  
   return (
       <table>
         <tbody>
-        <MetricRow text={'good'} value={props.good}/>
-        <MetricRow text={'neutral'} value={props.neutral}/>
-        <MetricRow text={'bad'} value={props.bad}/>
-        <MetricRow text={'all'} value={props.total}/>
-        <MetricRow text={'average'} value={props.average}/>
-        <PercentileMetricRow text={'positive'} value={props.positive}/>
+        <MetricRow text={'good'} value={good}/>
+        <MetricRow text={'neutral'} value={neutral}/>
+        <MetricRow text={'bad'} value={bad}/>
+        <MetricRow text={'all'} value={total}/>
+        <MetricRow text={'average'} value={average}/>
+        <PercentileMetricRow text={'positive'} value={positive}/>
         </tbody>
       </table>
   )
@@ -46,10 +51,6 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
-
-  const total = good + neutral + bad
-  const average = (good - bad) / total
-  const positive = good / total
 
   const addGoodFeedback = () => setGood(good + 1)
   const addNeutralFeedback = () => setNeutral(neutral + 1)
@@ -66,9 +67,6 @@ const App = () => {
             good={good}
             neutral={neutral}
             bad={bad}
-            total={total}
-            average={average}
-            positive={positive}
         />
       </div>
   )
